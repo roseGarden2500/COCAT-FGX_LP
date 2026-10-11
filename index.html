@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COCAT-FGX - ローカル文書＆Webからテキスト・画像をワンストップ一括抽出</title>
+    <meta name="description" content="PDF、Office文書（Word/Excel/PowerPoint）、およびWebページから「テキスト」と「埋め込み画像」をワンストップで一括抽出・保存するツールです。スキャンされたPDFや文字が画像化された文書であっても、内蔵の高性能OCR（文字認識）機能により、可能な限りテキスト化を行って保存します。">
+    <meta name="robots" content="index, follow">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent: #38bdf8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        header {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent);
+            letter-spacing: 2px;
+        }
+
+        .hero {
+            max-width: 900px;
+            margin: 4rem auto;
+            text-align: center;
+            padding: 0 1rem;
+        }
+
+        .hero-icon {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 10px 20px rgba(56, 189, 248, 0.3));
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-sub);
+            margin-bottom: 2.5rem;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+        }
+
+        .cta-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .features {
+            max-width: 1200px;
+            margin: 6rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: var(--accent);
+        }
+
+        .feature-card p {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+        }
+
+        /* ガイドセクション（使い方・インストール等） */
+        .guide-section {
+            max-width: 1000px;
+            margin: 6rem auto;
+            padding: 0 1rem;
+        }
+
+        .guide-section h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .guide-card {
+            background-color: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .guide-card h3 {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .guide-card p, .guide-card li {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+        }
+
+        .guide-card ul {
+            padding-left: 1.2rem;
+        }
+
+        .steps-container {
+            background-color: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2.5rem;
+        }
+
+        .steps-container h3 {
+            font-size: 1.4rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .step-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .step-item {
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1.2rem;
+            position: relative;
+        }
+
+        .step-num {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.85rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .step-item p {
+            color: var(--text-sub);
+            font-size: 0.9rem;
+        }
+
+        .supported-formats {
+            max-width: 1000px;
+            margin: 6rem auto;
+            padding: 2rem 1rem;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .supported-formats h2 {
+            margin-bottom: 1.5rem;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+
+        .tag {
+            background-color: #334155;
+            color: var(--accent);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* ライセンス・免責事項セクション */
+        .legal-section {
+            max-width: 1000px;
+            margin: 6rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .legal-card {
+            background-color: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .legal-card h3 {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .legal-card p {
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-sub);
+            border-top: 1px solid #1e293b;
+            margin-top: 6rem;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <img src="COCAT-ICON.png" alt="COCAT-FGX Icon" class="logo-icon">
+            <div class="logo">COCAT-FGX</div>
+        </div>
+        <a href="https://github.com/roseGarden2500/COCAT/releases/download/v1.0.1/COCAT-FGX.zip" class="cta-btn" style="padding: 0.5rem 1.2rem; font-size: 0.9rem;">ダウンロード</a>
+    </header>
+
+    <section class="hero">
+        <img src="COCAT-ICON.png" alt="COCAT-FGX Icon" class="hero-icon">
+        <h1>文書やWebのテキスト・画像を、<br>ワンストップで一括抽出。</h1>
+        <p>PDF、Office文書、Webページから欲しいコンテンツを丸ごと保存。<br>文字データのないスキャン文書も、高精細OCRで自動文字起こしします。</p>
+        <a href="https://github.com/roseGarden2500/COCAT/releases/download/v1.0.1/COCAT-FGX.zip" class="cta-btn">最新版をダウンロード（無料）</a>
+    </section>
+
+    <section class="features">
+        <div class="feature-card">
+            <div class="feature-icon">📁</div>
+            <h3>ローカル＆Webに両対応</h3>
+            <p>PDFやWord・Excelなどの各種オフィス文書はもちろん、指定したWebページの文章や画像も一元的に一括取得可能です。</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3>高精細OCRエンジン搭載</h3>
+            <p>内蔵のTesseract OCRにより、文字情報を持たない画像PDFやベクターPDFも高解像度レンダリングから自動で文字起こしします。</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🖼️</div>
+            <h3>埋め込み画像の一括抜き出し</h3>
+            <p>文書内に埋め込まれたオリジナル画像素材を画質劣化なしで抽出。用途に合わせてテキストのみ・画像のみの切り替えも自在です。</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🧠</div>
+            <h3>スマートノイズフィルタリング</h3>
+            <p>抽出時にWebサイトや文書に含まれる背景画像・小さなアイコンなどの不要なノイズ画像を自動判定して除外します。</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🏷️</div>
+            <h3>整頓しやすい自動命名規則</h3>
+            <p>元のファイル名やWebサイトの識別名を維持しつつ、タイムスタンプやページ番号を自動付与して上書き保存を防止します。</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🚀</div>
+            <h3>インストール不要で即起動</h3>
+            <p>面倒なセットアップ作業は不要。ZIPファイルを解凍して実行ファイルをダブルクリックするだけで、すぐにお使いいただけます。</p>
+        </div>
+    </section>
+
+    <!-- ご利用の流れ・操作方法ガイド -->
+    <section class="guide-section">
+        <h2>ご利用の流れ</h2>
+        
+        <div class="guide-grid">
+            <div class="guide-card">
+                <h3>📦 インストール方法</h3>
+                <p>ダウンロードしたzipファイルを任意のフォルダに解凍するだけで、すぐにご利用いただけます（インストーラー不要のポータブル仕様です）。</p>
+            </div>
+            <div class="guide-card">
+                <h3>🚀 起動方法</h3>
+                <p>解凍したフォルダ内にある実行ファイル <strong>`COCAT-FGX.exe`</strong> をダブルクリックして起動してください。あらかじめデスクトップなどに<strong>ショートカットを作成</strong>しておくと、次回からよりすばやく起動できて便利です。</p>
+            </div>
+        </div>
+
+        <div class="steps-container">
+            <h3>📝 基本的な操作方法</h3>
+            <ul class="step-list">
+                <li class="step-item">
+                    <span class="step-num">1</span>
+                    <p>抽出モード（テキストのみ・画像のみ・両方）を選択する</p>
+                </li>
+                <li class="step-item">
+                    <span class="step-num">2</span>
+                    <p>対象ファイルを画面内にドラッグ＆ドロップ、またはURLを入力する</p>
+                </li>
+                <li class="step-item">
+                    <span class="step-num">3</span>
+                    <p>保存先を確認して自動出力結果を受け取る</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="supported-formats">
+        <h2>対応フォーマット・対象</h2>
+        <div class="tags">
+            <span class="tag">PDF (.pdf / 通常・スキャン・ベクター対応)</span>
+            <span class="tag">Word (.docx)</span>
+            <span class="tag">Excel (.xlsx)</span>
+            <span class="tag">PowerPoint (.pptx)</span>
+            <span class="tag">Web Page (一般Webサイト)</span>
+            <span class="tag">Image Site (画像共有サイト一部対応)</span>
+        </div>
+    </section>
+
+    <!-- ライセンス・免責事項 -->
+    <section class="legal-section">
+        <div class="legal-card">
+            <h3>利用ライセンス</h3>
+            <p>本ソフトウェア（COCAT-FGX）はフリーウェアです。個人利用・商用利用を問わず、どなたでも無料でお使いいただけます。</p>
+        </div>
+        <div class="legal-card">
+            <h3>免責事項</h3>
+            <p>本ソフトウェアの利用によって生じたいかなる損害・トラブルについても、作者は一切の責任を負いかねます。ご利用にあたっては、ご自身の責任において行ってください。</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Feature GateX. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
